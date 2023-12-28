@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AndroidToDoList</string>
+    <string name="widget_name">Test</string>
+</resources>
