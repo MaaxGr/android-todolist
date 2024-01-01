@@ -31,6 +31,7 @@ import com.grossmax.androidtodolist.ui.theme.AppDarkGray
 import com.grossmax.androidtodolist.ui.theme.AppNearlyWhite
 import com.grossmax.androidtodolist.ui.theme.Purple40
 import com.grossmax.androidtodolist.ui.theme.Typography
+import kotlinx.datetime.LocalDateTime
 
 
 @Composable
@@ -85,12 +86,17 @@ fun ViewItemScreen(
                         onCheckClick = { viewModel.updateToDoChecked() }
                     )
 
-                    BottomArea(
-                        onDeleteClick = {
-                            viewModel.deleteToDo()
-                            navController.navigateUp()
-                        }
-                    )
+                    val item by viewModel.taskItemState.collectAsState()
+
+                    if (item != null) {
+                        BottomArea(
+                            createdAt = item!!.createdAt,
+                            onDeleteClick = {
+                                viewModel.deleteToDo()
+                                navController.navigateUp()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -150,6 +156,7 @@ fun TitleRowPreview() {
 
 @Composable
 fun BottomArea(
+    createdAt: LocalDateTime,
     onDeleteClick: () -> Unit
 ) {
     Column(
@@ -169,7 +176,7 @@ fun BottomArea(
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
-            Text(text = "Created X hours ago", color = AppNearlyWhite)
+            Text(text = "Created at $createdAt", color = AppNearlyWhite)
 
             Icon(
                 painter = painterResource(id = R.drawable.delete),
@@ -192,6 +199,7 @@ fun BottomAreaPreview() {
             .background(AppDarkGray),
     ) {
         BottomArea(
+            createdAt = LocalDateTime(2024, 1, 1, 0, 0),
             onDeleteClick = {}
         )
     }
