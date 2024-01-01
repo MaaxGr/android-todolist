@@ -10,15 +10,8 @@ A todolist app for android with state of the art technology.
 
 ## Screenshots
 
-|             |                                   |
-|-------------|-----------------------------------|
-| Widget      | ![Widget](docs/images/widget.png) |
-| Home Screen | ![Widget](docs/images/home.png)   |
-
-
-## Roadmap
-
-* [ ] Create a ToDo-Detail-View
-* [ ] Improve the New-ToDo-View
-* [ ] Add Backend-Support (Notion for the beginning?)
-* [ ] Publish to Play Store
+|                |                                   |
+|----------------|-----------------------------------|
+| Widget         | ![Widget](docs/images/widget.png) |
+| Home Screen    | ![Widget](docs/images/home.png)   |
+| View/Edit ToDo | ![Widget](docs/images/edit.png)   |
