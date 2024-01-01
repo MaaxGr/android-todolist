@@ -8,9 +8,6 @@ import com.grossmax.androidtodolist.utils.koinInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 class WidgetViewModel: ViewModel() {
 
@@ -26,6 +23,7 @@ class WidgetViewModel: ViewModel() {
     fun loadTodoList() {
         viewModelScope.launch(Dispatchers.IO) {
             val todoList = todoListRepository.loadToDoListFromMemory()
+                .sortedByDescending { it.uid }
 
             todoItems.value = todoList.filter { it.checkedAt == null }
         }

@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,9 +33,6 @@ import com.grossmax.androidtodolist.ui.theme.AppDarkGray
 import com.grossmax.androidtodolist.ui.theme.AppNearlyWhite
 import com.grossmax.androidtodolist.ui.theme.Purple40
 import com.grossmax.androidtodolist.ui.theme.Typography
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 
 @Composable
@@ -56,22 +55,45 @@ fun HomeScreen(
 
     val tasks by viewModel.todoItems.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .background(Color.Black)
-            .padding(8.dp)
-    ) {
-        Text(text = "Tasks", color = Purple40, style = Typography.headlineLarge)
-        HomeScreenContent(
-            todoEntities = tasks,
-            onTodoCheckClicked = {
-                viewModel.clickToDoCheck(it)
-            },
-            onTodoClickCard = {
-                navController.navigate("view/${it.uid}")
+    Scaffold(
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .background(Color.Black)
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .padding(bottom = paddingValues.calculateBottomPadding())
+            ) {
+                Text(text = "Tasks", color = Purple40, style = Typography.headlineLarge)
+
+                Box(modifier = Modifier.weight(1f)) {
+                    HomeScreenContent(
+                        todoEntities = tasks,
+                        onTodoCheckClicked = {
+                            viewModel.clickToDoCheck(it)
+                        },
+                        onTodoClickCard = {
+                            navController.navigate("view/${it.uid}")
+                        }
+                    )
+                }
             }
-        )
-    }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate("add")
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.add_24px),
+                    contentDescription = "Add",
+                    tint = AppNearlyWhite
+                )
+            }
+        }
+    )
+
 }
 
 @Composable
@@ -181,3 +203,4 @@ fun TaskCardPreviewChecked() {
     )
 
 }
+

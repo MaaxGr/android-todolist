@@ -11,15 +11,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.glance.appwidget.updateAll
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.grossmax.androidtodolist.dataaccess.TodoListRepository
-import com.grossmax.androidtodolist.ui.screens.AddToDoListItemScreen
-import com.grossmax.androidtodolist.ui.screens.HomeScreen
-import com.grossmax.androidtodolist.ui.screens.ViewItemScreen
+import com.grossmax.androidtodolist.ui.composables.AppNavHost
 import com.grossmax.androidtodolist.ui.theme.AndroidToDoListTheme
 import com.grossmax.androidtodolist.ui.widgets.MyAppWidget
 import com.grossmax.androidtodolist.ui.widgets.MyAppWidgetReceiver
@@ -51,22 +45,11 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     val navController = rememberNavController()
-
                     val explicitNavigateTo = intent.extras?.getString("navigateTo")
 
                     Log.i("MainActivity", "navigateTo: $explicitNavigateTo")
 
-                    NavHost(navController = navController, startDestination = "home") {
-                        composable("home") { HomeScreen(navController) }
-                        composable("add") { AddToDoListItemScreen(navController) }
-                        composable(
-                            route = "view/{taskId}",
-                            arguments = listOf(navArgument("taskId") { type = NavType.IntType })
-                        ) {
-                            ViewItemScreen(navController = navController, it.arguments!!.getInt("taskId"))
-                        }
-                    }
-
+                    AppNavHost(navController, explicitNavigateTo)
                     LaunchedEffect(key1 = Unit) {
                         if (explicitNavigateTo != null) {
                             navController.popBackStack()

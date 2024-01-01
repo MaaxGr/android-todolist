@@ -36,10 +36,9 @@ import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.grossmax.androidtodolist.ui.MainActivity
 import com.grossmax.androidtodolist.R
 import com.grossmax.androidtodolist.dataaccess.TodoListRepository
-import com.grossmax.androidtodolist.dataaccess.room.entity.ToDoEntity
+import com.grossmax.androidtodolist.ui.MainActivity
 import com.grossmax.androidtodolist.ui.theme.AppDarkGray
 import com.grossmax.androidtodolist.ui.theme.AppDarkGrayDivider1
 import com.grossmax.androidtodolist.ui.theme.AppDarkGrayDivider2
@@ -166,7 +165,9 @@ class MyAppWidget : GlanceAppWidget() {
                 Image(
                     provider = ImageProvider(R.drawable.add_24px),
                     contentDescription = "Add",
-                    modifier = GlanceModifier.clickable(actionStartComposeView("add"))
+                    modifier = GlanceModifier.clickable(
+                        actionStartComposeView("add?finishOnLeave=true")
+                    )
                 )
             }
         }

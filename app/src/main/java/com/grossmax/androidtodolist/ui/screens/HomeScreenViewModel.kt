@@ -19,6 +19,7 @@ class HomeScreenViewModel: ViewModel() {
     fun reload() {
         viewModelScope.launch(Dispatchers.IO) {
             todoItems.value = todoListRepository.loadToDoListFromMemory()
+                .sortedByDescending { it.uid }
         }
     }
 
