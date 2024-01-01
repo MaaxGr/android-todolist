@@ -6,7 +6,7 @@ import com.grossmax.androidtodolist.businesslogic.services.TimeServer
 import com.grossmax.androidtodolist.dataaccess.TodoListRepository
 import com.grossmax.androidtodolist.dataaccess.TodoListRepositoryImpl
 import com.grossmax.androidtodolist.dataaccess.room.AppRoomDatabase
-import com.grossmax.androidtodolist.ui.widgets.WidgetViewModel
+import com.grossmax.androidtodolist.ui.widgets.TaskWidgetViewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
@@ -29,7 +29,7 @@ class AndroidTodoListApplication : Application() {
                     single { TimeServer() }
 
                     // ui
-                    single { WidgetViewModel() }
+                    single { TaskWidgetViewModel() }
                     single<TodoListRepository> { TodoListRepositoryImpl() }
 
                     // data access

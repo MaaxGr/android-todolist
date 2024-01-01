@@ -1,6 +1,5 @@
 package com.grossmax.androidtodolist.ui.widgets
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -18,7 +17,6 @@ import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
@@ -43,46 +41,13 @@ import com.grossmax.androidtodolist.ui.theme.AppDarkGray
 import com.grossmax.androidtodolist.ui.theme.AppDarkGrayDivider1
 import com.grossmax.androidtodolist.ui.theme.AppDarkGrayDivider2
 import com.grossmax.androidtodolist.utils.koinGet
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 
-class MyAppWidgetReceiver : GlanceAppWidgetReceiver() {
+class TaskWidget : GlanceAppWidget() {
 
-    private val coroutineScope = MainScope()
-    private val viewModel: WidgetViewModel = koinGet()
-
-    override val glanceAppWidget: GlanceAppWidget
-        get() = MyAppWidget()
-
-    override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
-    ) {
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
-        Log.i("MyAppWidgetReceiver", "onUpdate")
-    }
-
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-
-        if (intent.action == "updateAction") {
-            coroutineScope.launch {
-                Log.i("MyAppWidgetReceiver", "onReceive")
-                viewModel.loadTodoList()
-            }
-        }
-    }
-
-}
-
-class MyAppWidget : GlanceAppWidget() {
-
-    private val viewModel: WidgetViewModel = koinGet()
+    private val viewModel: TaskWidgetViewModel = koinGet()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        Log.i("MyAppWidget", "provideGlance")
-        viewModel.init()
+        Log.i("TaskWidget", "provideGlance")
         viewModel.loadTodoList()
 
         provideContent {
@@ -93,7 +58,7 @@ class MyAppWidget : GlanceAppWidget() {
 
     @Composable
     private fun MyContent() {
-        val viewModel: WidgetViewModel = koinGet()
+        val viewModel: TaskWidgetViewModel = koinGet()
         val value by viewModel.todoItems.collectAsState()
 
         Column(
@@ -102,14 +67,9 @@ class MyAppWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            HeaderComponent(addToDoItemCallback = {
-                viewModel.addTodoItem(it)
-            })
-
+            HeaderComponent()
             WidgetDivider(color = AppDarkGrayDivider2)
             BodyComponent(value = value)
-
-
         }
     }
 
@@ -119,12 +79,11 @@ class MyAppWidget : GlanceAppWidget() {
             modifier = GlanceModifier.background(color).height(1.dp)
                 .fillMaxWidth()
         ) {
-            Text(text = "hi")
         }
     }
 
     @Composable
-    private fun HeaderComponent(addToDoItemCallback: (String) -> Unit) {
+    private fun HeaderComponent() {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = GlanceModifier.fillMaxWidth().padding(8.dp)
@@ -181,22 +140,12 @@ class MyAppWidget : GlanceAppWidget() {
                     Column {
                         val context = LocalContext.current
                         Row(
-                            modifier = GlanceModifier.fillMaxWidth().padding(8.dp)
-                                .clickable {
-                                    val intent = Intent(context,
-                                        MainActivity::class.java
-                                    ).apply {
-                                        flags =
-                                            Intent.FLAG_ACTIVITY_NEW_TASK
-                                        putExtra(
-                                            "navigateTo",
-                                            "view/${it.uid}"
-                                        )
-                                        Log.i("MyAppWidget", "BodyComponent: $index")
-                                    }
-                                    Log.i("MyAppWidget", "BodyComponent: $index")
-                                    context.startActivity(intent)
-                                },
+                            modifier = GlanceModifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .clickable(
+                                    actionStartComposeView("view/${it.uid}")
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Image(
@@ -204,7 +153,7 @@ class MyAppWidget : GlanceAppWidget() {
                                 contentDescription = "Check",
                                 modifier = GlanceModifier.clickable {
                                     viewModel.checkTask(it)
-                                }
+                                },
                             )
                             Text(
                                 text = it.title,
@@ -231,23 +180,23 @@ class MyAppWidget : GlanceAppWidget() {
             glanceId: GlanceId,
             parameters: ActionParameters
         ) {
-            Log.i("MyAppWidget", "RefreshAction")
+            Log.i("TaskWidget", "RefreshAction")
             // do some work but offset long-term tasks (e.g a Worker)
-            MyAppWidget().update(context, glanceId)
+            TaskWidget().update(context, glanceId)
         }
     }
-}
 
-@Composable
-private fun actionStartComposeView(view: String): Action {
-    return androidx.glance.appwidget.action.actionStartActivity(
-        Intent(
-            LocalContext.current,
-            MainActivity::class.java
-        ).apply {
-            flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK
-            putExtra("navigateTo", view)
-        }
-    )
+    @Composable
+    private fun actionStartComposeView(view: String): Action {
+        return androidx.glance.appwidget.action.actionStartActivity(
+            Intent(
+                LocalContext.current,
+                MainActivity::class.java
+            ).apply {
+                flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("navigateTo", view)
+            }
+        )
+    }
 }

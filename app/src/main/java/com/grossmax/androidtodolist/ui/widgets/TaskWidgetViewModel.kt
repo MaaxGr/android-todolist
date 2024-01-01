@@ -9,16 +9,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class WidgetViewModel: ViewModel() {
+class TaskWidgetViewModel: ViewModel() {
 
     private val timeServer: TimeServer by koinInject()
     private val todoListRepository: TodoListRepository by koinInject()
 
     val todoItems: MutableStateFlow<List<TodoListRepository.ToDoItem>> = MutableStateFlow(listOf())
-
-    fun init() {
-
-    }
 
     fun loadTodoList() {
         viewModelScope.launch(Dispatchers.IO) {

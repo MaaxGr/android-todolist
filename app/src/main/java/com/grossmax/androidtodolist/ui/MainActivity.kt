@@ -15,8 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.grossmax.androidtodolist.dataaccess.TodoListRepository
 import com.grossmax.androidtodolist.ui.composables.AppNavHost
 import com.grossmax.androidtodolist.ui.theme.AndroidToDoListTheme
-import com.grossmax.androidtodolist.ui.widgets.MyAppWidget
-import com.grossmax.androidtodolist.ui.widgets.MyAppWidgetReceiver
+import com.grossmax.androidtodolist.ui.widgets.TaskWidget
+import com.grossmax.androidtodolist.ui.widgets.TaskWidgetReceiver
 import com.grossmax.androidtodolist.utils.koinInject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
         val context = this
         todoListRepository.addChangeListener {
-            val intent = Intent(context, MyAppWidgetReceiver::class.java).apply {
+            val intent = Intent(context, TaskWidgetReceiver::class.java).apply {
                 action = "updateAction"
             }
             context.sendBroadcast(intent)
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
         GlobalScope.launch {
             Log.i("MainActivity", "onPause")
-            MyAppWidget().updateAll(applicationContext)
+            TaskWidget().updateAll(applicationContext)
         }
     }
 
