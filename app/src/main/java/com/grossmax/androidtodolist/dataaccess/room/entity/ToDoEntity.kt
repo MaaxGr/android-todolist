@@ -1,4 +1,4 @@
-package com.grossmax.androidtodolist.data.database.entity
+package com.grossmax.androidtodolist.dataaccess.room.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

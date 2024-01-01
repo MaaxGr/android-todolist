@@ -1,10 +1,10 @@
-package com.grossmax.androidtodolist.data.database
+package com.grossmax.androidtodolist.dataaccess.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.grossmax.androidtodolist.data.database.dao.ToDoDao
-import com.grossmax.androidtodolist.data.database.entity.ToDoEntity
+import com.grossmax.androidtodolist.dataaccess.room.dao.ToDoDao
+import com.grossmax.androidtodolist.dataaccess.room.entity.ToDoEntity
 
 @TypeConverters(AppRoomConverters::class)
 @Database(entities = [ToDoEntity::class], version = 1)

@@ -1,7 +1,5 @@
 package com.grossmax.androidtodolist.ui
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,19 +8,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.grossmax.androidtodolist.data.TodoListRepository
+import com.grossmax.androidtodolist.dataaccess.TodoListRepository
 import com.grossmax.androidtodolist.ui.screens.AddToDoListItemScreen
 import com.grossmax.androidtodolist.ui.screens.HomeScreen
 import com.grossmax.androidtodolist.ui.screens.ViewItemScreen
@@ -30,19 +24,12 @@ import com.grossmax.androidtodolist.ui.theme.AndroidToDoListTheme
 import com.grossmax.androidtodolist.ui.widgets.MyAppWidget
 import com.grossmax.androidtodolist.ui.widgets.MyAppWidgetReceiver
 import com.grossmax.androidtodolist.utils.koinInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class MainActivity : ComponentActivity() {
 
     private val todoListRepository: TodoListRepository by koinInject()
-
-    private val mutex = Mutex()
-    private val activityScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -4,9 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.grossmax.androidtodolist.data.TodoListRepository
-import com.grossmax.androidtodolist.data.database.dao.ToDoDao
-import com.grossmax.androidtodolist.data.database.entity.ToDoEntity
+import com.grossmax.androidtodolist.businesslogic.services.TimeServer
+import com.grossmax.androidtodolist.dataaccess.TodoListRepository
 import com.grossmax.androidtodolist.utils.koinInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,13 +16,15 @@ import kotlinx.datetime.toLocalDateTime
 
 class ViewItemScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
 
+    // args
     private val todoId = checkNotNull(savedStateHandle.get<Int>("taskId"))
 
+    // dependencies
     private val todoListRepository: TodoListRepository by koinInject()
-    private val todoListDao: ToDoDao by koinInject()
+    private val timeServer: TimeServer by koinInject()
 
-    val taskItemState: MutableStateFlow<ToDoEntity?> = MutableStateFlow(null)
-
+    // state
+    val taskItemState: MutableStateFlow<TodoListRepository.ToDoItem?> = MutableStateFlow(null)
     val loaded = MutableStateFlow(false)
     val taskTitle = MutableStateFlow("")
     val checkedState: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -38,7 +39,7 @@ class ViewItemScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
         checkedState.value = false
 
         viewModelScope.launch(Dispatchers.IO) {
-            val todoItem = todoListDao.getAll().find { it.uid == todoId }
+            val todoItem = todoListRepository.loadToDoListFromMemory().find { it.uid == todoId }
             taskItemState.value = todoItem
             taskTitle.value = todoItem?.title ?: ""
             checkedState.value = todoItem?.checkedAt != null
@@ -51,28 +52,28 @@ class ViewItemScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
         somethingChanged.value = true
 
         viewModelScope.launch(Dispatchers.IO) {
-            todoListDao.setTitle(todoId, title)
+            todoListRepository.setTitle(todoId, title)
         }
     }
 
     fun deleteToDo() {
         viewModelScope.launch(Dispatchers.IO) {
-            todoListDao.delete(taskItemState.value!!)
+            todoListRepository.deleteById(todoId)
             todoListRepository.triggerChange()
         }
     }
 
     fun updateToDoChecked() {
         val newCheckState = if (!checkedState.value) {
-            val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            val localDateTime = timeServer.getCurrentLocalDateTime()
             viewModelScope.launch(Dispatchers.IO) {
-                todoListDao.setChecked(todoId, localDateTime)
+                todoListRepository.setChecked(todoId, localDateTime)
                 todoListRepository.triggerChange()
             }
             true
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                todoListDao.setUnchecked(todoId)
+                todoListRepository.setUnchecked(todoId)
                 todoListRepository.triggerChange()
             }
             false

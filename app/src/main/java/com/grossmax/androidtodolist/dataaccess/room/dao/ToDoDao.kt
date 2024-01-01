@@ -1,10 +1,9 @@
-package com.grossmax.androidtodolist.data.database.dao
+package com.grossmax.androidtodolist.dataaccess.room.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.grossmax.androidtodolist.data.database.entity.ToDoEntity
+import com.grossmax.androidtodolist.dataaccess.room.entity.ToDoEntity
 import kotlinx.datetime.LocalDateTime
 
 @Dao
@@ -16,8 +15,8 @@ interface ToDoDao {
     @Insert
     fun insertAll(vararg todo: ToDoEntity)
 
-    @Delete
-    fun delete(todo: ToDoEntity)
+    @Query("DELETE FROM todo WHERE uid = :id")
+    fun deleteById(id: Int)
 
     @Query("UPDATE todo SET checked_at = :localDateTime WHERE uid = :id")
     fun setChecked(id: Int, localDateTime: LocalDateTime)

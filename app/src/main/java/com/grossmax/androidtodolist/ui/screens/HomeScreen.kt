@@ -25,8 +25,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.grossmax.androidtodolist.R
-import com.grossmax.androidtodolist.data.database.entity.ToDoEntity
-import com.grossmax.androidtodolist.ui.theme.AndroidToDoListTheme
+import com.grossmax.androidtodolist.businesslogic.services.TimeServer
+import com.grossmax.androidtodolist.dataaccess.TodoListRepository
 import com.grossmax.androidtodolist.ui.theme.AppDarkGray
 import com.grossmax.androidtodolist.ui.theme.AppNearlyWhite
 import com.grossmax.androidtodolist.ui.theme.Purple40
@@ -54,7 +54,7 @@ fun HomeScreen(
         }
     }
 
-    val tasks by viewModel.testState.collectAsState()
+    val tasks by viewModel.todoItems.collectAsState()
 
     Column(
         modifier = Modifier
@@ -76,9 +76,9 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreenContent(
-    todoEntities: List<ToDoEntity>,
-    onTodoCheckClicked: (ToDoEntity) -> Unit,
-    onTodoClickCard: (ToDoEntity) -> Unit
+    todoEntities: List<TodoListRepository.ToDoItem>,
+    onTodoCheckClicked: (TodoListRepository.ToDoItem) -> Unit,
+    onTodoClickCard: (TodoListRepository.ToDoItem) -> Unit
 ) {
     LazyColumn {
         if (todoEntities.isNotEmpty()) {
@@ -101,7 +101,7 @@ fun HomeScreenContent(
 
 @Composable
 fun TaskCard(
-    task: ToDoEntity,
+    task: TodoListRepository.ToDoItem,
     checkClick: () -> Unit,
     cardClick: () -> Unit
 ) {
@@ -146,9 +146,11 @@ fun TaskCard(
 @Composable
 fun TaskCardPreviewUnchecked() {
     TaskCard(
-        task = ToDoEntity(
-            0, "Test", null,
-            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        task = TodoListRepository.ToDoItem(
+            uid = 0,
+            title = "Test",
+            checkedAt = null,
+            createdAt = TimeServer().getCurrentLocalDateTime()
         ),
         checkClick = {
 
@@ -165,11 +167,11 @@ fun TaskCardPreviewUnchecked() {
 fun TaskCardPreviewChecked() {
 
     TaskCard(
-        task = ToDoEntity(
+        task = TodoListRepository.ToDoItem(
             uid = 0,
             title = "Test",
-            checkedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            checkedAt = TimeServer().getCurrentLocalDateTime(),
+            createdAt = TimeServer().getCurrentLocalDateTime()
         ),
         checkClick = {
         },

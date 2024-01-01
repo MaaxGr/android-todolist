@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.glance.ExperimentalGlanceApi
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -25,8 +24,6 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -41,7 +38,8 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.grossmax.androidtodolist.ui.MainActivity
 import com.grossmax.androidtodolist.R
-import com.grossmax.androidtodolist.data.database.entity.ToDoEntity
+import com.grossmax.androidtodolist.dataaccess.TodoListRepository
+import com.grossmax.androidtodolist.dataaccess.room.entity.ToDoEntity
 import com.grossmax.androidtodolist.ui.theme.AppDarkGray
 import com.grossmax.androidtodolist.ui.theme.AppDarkGrayDivider1
 import com.grossmax.androidtodolist.ui.theme.AppDarkGrayDivider2
@@ -97,7 +95,7 @@ class MyAppWidget : GlanceAppWidget() {
     @Composable
     private fun MyContent() {
         val viewModel: WidgetViewModel = koinGet()
-        val value by viewModel.testState.collectAsState()
+        val value by viewModel.todoItems.collectAsState()
 
         Column(
             modifier = GlanceModifier.fillMaxSize().cornerRadius(12.dp).background(AppDarkGray),
@@ -175,7 +173,7 @@ class MyAppWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun BodyComponent(value: List<ToDoEntity>) {
+    private fun BodyComponent(value: List<TodoListRepository.ToDoItem>) {
         LazyColumn(modifier = GlanceModifier) {
             value.forEachIndexed { index, it ->
                 item {
@@ -191,7 +189,7 @@ class MyAppWidget : GlanceAppWidget() {
                                             Intent.FLAG_ACTIVITY_NEW_TASK
                                         putExtra(
                                             "navigateTo",
-                                            "view/$index"
+                                            "view/${it.uid}"
                                         )
                                         Log.i("MyAppWidget", "BodyComponent: $index")
                                     }
@@ -237,8 +235,6 @@ class MyAppWidget : GlanceAppWidget() {
             MyAppWidget().update(context, glanceId)
         }
     }
-
-
 }
 
 @Composable

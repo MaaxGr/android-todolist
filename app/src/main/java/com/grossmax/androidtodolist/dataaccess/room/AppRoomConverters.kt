@@ -1,4 +1,4 @@
-package com.grossmax.androidtodolist.data.database
+package com.grossmax.androidtodolist.dataaccess.room
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.LocalDateTime
