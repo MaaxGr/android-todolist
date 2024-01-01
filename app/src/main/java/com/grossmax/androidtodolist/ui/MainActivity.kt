@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     Log.i("MainActivity", "navigateTo: $explicitNavigateTo")
 
                     NavHost(navController = navController, startDestination = "home") {
-                        composable("home") { HomeScreen() }
+                        composable("home") { HomeScreen(navController) }
                         composable("add") { AddToDoListItemScreen(navController) }
                         composable(
                             route = "view/{taskId}",

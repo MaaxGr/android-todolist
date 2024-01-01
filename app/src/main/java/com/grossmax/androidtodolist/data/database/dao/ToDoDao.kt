@@ -22,6 +22,9 @@ interface ToDoDao {
     @Query("UPDATE todo SET checked_at = :localDateTime WHERE uid = :id")
     fun setChecked(id: Int, localDateTime: LocalDateTime)
 
+    @Query("UPDATE todo SET title = :title WHERE uid = :id")
+    fun setTitle(id: Int, title: String)
+
     @Query("UPDATE todo SET checked_at = null WHERE uid = :id")
     fun setUnchecked(id: Int)
 

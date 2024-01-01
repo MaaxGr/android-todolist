@@ -3,6 +3,7 @@ package com.grossmax.androidtodolist.data
 interface TodoListRepository {
 
     data class ToDoItem(
+        val uid: Int,
         val title: String
     )
 

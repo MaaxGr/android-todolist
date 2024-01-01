@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.grossmax.androidtodolist.R
 import com.grossmax.androidtodolist.data.database.entity.ToDoEntity
 import com.grossmax.androidtodolist.ui.theme.AndroidToDoListTheme
@@ -36,7 +37,10 @@ import kotlinx.datetime.toLocalDateTime
 
 
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeScreenViewModel = viewModel(),
+) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -62,6 +66,9 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
             todoEntities = tasks,
             onTodoCheckClicked = {
                 viewModel.clickToDoCheck(it)
+            },
+            onTodoClickCard = {
+                navController.navigate("view/${it.uid}")
             }
         )
     }
@@ -70,7 +77,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
 @Composable
 fun HomeScreenContent(
     todoEntities: List<ToDoEntity>,
-    onTodoCheckClicked: (ToDoEntity) -> Unit
+    onTodoCheckClicked: (ToDoEntity) -> Unit,
+    onTodoClickCard: (ToDoEntity) -> Unit
 ) {
     LazyColumn {
         if (todoEntities.isNotEmpty()) {
@@ -81,6 +89,9 @@ fun HomeScreenContent(
                     task = task,
                     checkClick = {
                         onTodoCheckClicked(task)
+                    },
+                    cardClick = {
+                        onTodoClickCard(task)
                     }
                 )
             }
@@ -89,13 +100,20 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun TaskCard(task: ToDoEntity, checkClick: () -> Unit) {
-    Box(modifier = Modifier.padding(bottom = 2.dp)) {
+fun TaskCard(
+    task: ToDoEntity,
+    checkClick: () -> Unit,
+    cardClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier.padding(bottom = 2.dp)
+    ) {
         Row(
             modifier = Modifier
                 .background(AppDarkGray)
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(12.dp)
+                .clickable { cardClick() },
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
 
@@ -134,6 +152,9 @@ fun TaskCardPreviewUnchecked() {
         ),
         checkClick = {
 
+        },
+        cardClick = {
+
         }
     )
 
@@ -151,16 +172,10 @@ fun TaskCardPreviewChecked() {
             createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         ),
         checkClick = {
+        },
+        cardClick = {
+
         }
     )
 
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    AndroidToDoListTheme {
-        HomeScreen()
-    }
 }
